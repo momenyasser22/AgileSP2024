@@ -3,7 +3,7 @@ require_once 'db_connect.php';
 
 class ActivityModel {
     private $conn;
-
+//comment
     public function __construct() {
         global $conn;
         $this->conn = $conn;
