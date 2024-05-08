@@ -1,6 +1,4 @@
 <?php
-// db_connect.php
-
 use Exception;
 use mysqli;
 
@@ -28,9 +26,6 @@ class Database {
             self::$instance = new self();
         }
         return self::$instance;
-
-        if (self::$instance) {
-            return self::$instance;}
     }
 
     // Public method to get the database connection
@@ -46,6 +41,8 @@ try {
 
     // Get the database connection
     $conn = $db->getConnection();
+    echo "Connected successfully";
 } catch (Exception $e) {
     die("Error: " . $e->getMessage());
 }
+?>
