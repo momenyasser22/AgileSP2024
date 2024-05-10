@@ -29,8 +29,8 @@ class DailyActivityController {
     public function updateDailyActivity($activityId, $newData) {
         return $this->model->updateDailyActivity($activityId, $newData);
     }
-    public function getDailyActivitiesByUserID($userID) {
-        return $this->model->getDailyActivitiesByUserID($userID);
+    public function getDailyActivitiesByUserID($userID, $userType) {
+        return $this->model->getDailyActivitiesByUserID($userID, $userType);
     }
 
     public function deleteDailyActivity($activityId) {
