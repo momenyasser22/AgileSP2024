@@ -81,7 +81,7 @@ if (isset($_GET['UserID']) && isset($_GET['usertype'])) {
             <td><?php echo isset($activity['ActivityName']) ? $activity['ActivityName'] : ''; ?></td>
             <td><?php echo isset($activity['Date_Recieved']) ? $activity['Date_Recieved'] : ''; ?></td>
             <td><?php echo isset($activity['Recieved_By']) ? $activity['Recieved_By'] : ''; ?></td>
-            <td><?php echo isset($activity['Time_Leaved']) ? $activity['Time_Leaved'] : ''; ?></td> <!-- Added this column -->
+            <td><?php echo isset($activity['Time_Leaved']) ? $activity['Time_Leaved'] : ''; ?></td> 
         </tr>
     <?php endforeach; ?>
 </tbody>
