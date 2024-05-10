@@ -56,9 +56,9 @@ if (isset($_GET['UserID']) && isset($_GET['usertype'])) {
 <body>
     <h2>Daily Activities</h2>
     
-    <a href="add_activity.php" class="add-button">Add New Activity</a>
-    <a href="update_activity.php" class="update-button">Update existing Activity</a>
-    <a href="DailyActivitydelete.php" class="Delete-button">Delete existing Activity</a>
+    <a href="add_activity.php?UserTypeID=<?php echo $usertype; ?>" class="add-button">Add New Activity</a>
+    <a href="update_activity.php?UserTypeID=<?php echo $usertype; ?>" class="update-button">Update existing Activity</a>
+    <a href="DailyActivitydelete.php?UserTypeID=<?php echo $usertype; ?>" class="Delete-button">Delete existing Activity</a>
 
     <table>
     <thead>
