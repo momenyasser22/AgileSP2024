@@ -1,11 +1,24 @@
 <?php
 require_once 'dbconnect.php';
 require_once 'DailyActivityController.php';
+require_once 'PermissionController.php';
 
 $db = Database::getInstance();
 $conn = $db->getConnection();
 
 $controller = new DailyActivityController(new DailyActivityModel($conn));
+$permissionController = new PermissionController();
+
+if (isset($_GET['UserTypeID'])) {
+    $userTypeID = $_GET['UserTypeID'];
+
+    // Check if the user type ID is not zero (i.e., not admin)
+    if (!$permissionController->checkPermission($userTypeID, 'update_activity.php')) {
+        // Redirect to an error page or display an access denied message
+        header("Location: permission_denied.php");
+        exit();
+    }
+}
 
 // Fetch all activity IDs
 $allActivities = $controller->getAllDailyActivities();
