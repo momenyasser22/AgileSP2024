@@ -16,7 +16,7 @@ class PermissionModel {
     public function checkPermission($userTypeID, $permissionName) {
         try {
             // Prepare and execute the query with placeholders
-            $stmt = $this->db->prepare("SELECT COUNT(*) AS count FROM permission1 WHERE usertype = ? AND user_type = ?");
+            $stmt = $this->db->prepare("SELECT COUNT(*) AS count FROM permission1 WHERE usertype = ? AND pagename = ?");
             $stmt->bind_param("is", $userTypeID, $permissionName);
             $stmt->execute();
 
