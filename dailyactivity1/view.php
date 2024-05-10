@@ -16,7 +16,7 @@ if (isset($_GET['UserID']) && isset($_GET['usertype'])) {
     $controller = new DailyActivityController(new DailyActivityModel($conn));
 
     // Fetch all daily activities for the specific user
-    $allActivities = $controller->getDailyActivitiesByUserID($UserID);
+    $allActivities = $controller->getDailyActivitiesByUserID($UserID, $usertype);
 
     // Assuming you have a function to get activity names, you can fetch them here
 
