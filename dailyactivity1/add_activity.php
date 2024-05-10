@@ -1,6 +1,22 @@
 <?php
+session_start();
+require_once 'PermissionController.php';
 require_once 'dbconnect.php';
 require_once 'DailyActivityController.php';
+
+// Check if the user has permission to add a new daily activity
+$permissionController = new PermissionController();
+
+if (isset($_GET['UserTypeID'])) {
+    $userTypeID = $_GET['UserTypeID'];
+
+    // Check if the user type ID is not zero (i.e., not admin)
+    if (!$permissionController->checkPermission($userTypeID, 'add_activity.php')) {
+        // Redirect to an error page or display an access denied message
+        header("Location: permission_denied.php");
+        exit();
+    }
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $db = Database::getInstance();
