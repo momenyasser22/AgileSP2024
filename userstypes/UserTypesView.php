@@ -53,7 +53,7 @@ $userTypes = $userTypesController->getAllUserTypes();
 </head>
 <body>
     <h2>User Types</h2>
-    <a href="A_Usertypes.php" class="add-button">Add New UserTypes</a>
+    <a href="A_Usertypes.php?UserTypeID=<?php echo $_GET['UserTypeID']; ?>" class="add-button">Add New UserTypes</a>
 
     <table>
         <thead>
@@ -69,8 +69,8 @@ $userTypes = $userTypesController->getAllUserTypes();
                     <td><?php echo $userType['id']; ?></td>
                     <td><?php echo $userType['Type']; ?></td>
                     <td>
-                        <a href="U_Usertypes.php?id=<?php echo $userType['id']; ?>">Update</a>
-                        <a href="D_usertype.php?id=<?php echo $userType['id']; ?>">Delete</a>
+                        <a href="U_Usertypes.php?UserTypeID=<?php echo $_GET['UserTypeID']; ?>&id=<?php echo $userType['id']; ?>">Update</a>
+                        <a href="D_Usertype.php?UserTypeID=<?php echo $_GET['UserTypeID']; ?>&id=<?php echo $userType['id']; ?>">Delete</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
