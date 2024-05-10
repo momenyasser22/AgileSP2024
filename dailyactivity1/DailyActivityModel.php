@@ -88,15 +88,15 @@ public function getAllActivityIds() {
     }
     return $activityIds;
 }
-public function getDailyActivitiesByUserID($userID) {
-    // Check if usertype is 0
-    if ($_SESSION['usertype'] == 0) {
-        // If usertype is 0, retrieve all activities with activity names
+public function getDailyActivitiesByUserID($userID, $userType) {
+    // Check if usertype is 0 or 1
+    if ($userType == 0 || $userType == 1) {
+        // If usertype is 0 or 1, retrieve all activities with activity names
         $query = "SELECT d.*, a.ActivityName
                   FROM dailyactivity1 d
                   LEFT JOIN activitytypes a ON d.activity_type_id = a.type_id";
-    } elseif ($_SESSION['usertype'] !== 0) {
-        // If usertype is not 0, retrieve activities for the specified user with activity names
+    } if (!($userType == 0 || $userType == 1)) {
+        // If usertype is not 0 or 1, retrieve activities for the specified user with activity names
         $query = "SELECT d.*, a.ActivityName
                   FROM dailyactivity1 d
                   LEFT JOIN activitytypes a ON d.activity_type_id = a.type_id
