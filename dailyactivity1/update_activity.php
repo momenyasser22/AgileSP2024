@@ -2,12 +2,16 @@
 require_once 'dbconnect.php';
 require_once 'DailyActivityController.php';
 require_once 'PermissionController.php';
+require_once 'UsersController.php';
+require_once 'UserTypesController.php';
 
 $db = Database::getInstance();
 $conn = $db->getConnection();
 
 $controller = new DailyActivityController(new DailyActivityModel($conn));
 $permissionController = new PermissionController();
+$usersController = new UsersController();
+$userTypesController = new UserTypesController();
 
 if (isset($_GET['UserTypeID'])) {
     $userTypeID = $_GET['UserTypeID'];
@@ -30,6 +34,13 @@ $activityId = isset($_GET['activity_id']) ? $_GET['activity_id'] : null;
 if ($activityId) {
     $activity = $controller->getDailyActivityById($activityId);
 }
+
+// Fetch user IDs from UsersController
+$userIDs = $usersController->getAllUserIds();
+
+// Fetch activity type IDs and names from UserTypesController
+$activityTypes = $userTypesController->getAllActivityTypes();
+
 ?>
 
 <!DOCTYPE html>
@@ -41,28 +52,40 @@ if ($activityId) {
 </head>
 <body>
     <h2>Update Activity</h2>
-    <form action="update_process.php" method="POST">
+    <form action="update_process.php?UserTypeID=<?php echo isset($_GET['UserTypeID']) ? $_GET['UserTypeID'] : ''; ?>" method="POST">
         <label for="activity_id">Select Activity ID:</label>
         <select name="activity_id" id="activity_id">
             <?php foreach ($allActivities as $activityItem): ?>
-                <option value="<?php echo $activityItem['activity_id']; ?>" <?php echo ($activityItem['activity_id'] == $activityId) ? 'selected' : ''; ?>><?php echo $activityItem['activity_id']; ?></option>
+                <option value="<?php echo $activityItem->activityId; ?>" <?php echo ($activityItem->activityId == $activityId) ? 'selected' : ''; ?>><?php echo $activityItem->activityId; ?></option>
             <?php endforeach; ?>
-        </select>
+        </select><br><br>
         
         <label for="newUserId">New User ID:</label>
-        <input type="text" id="newUserId" name="newUserId" value="<?php echo isset($activity['userid']) ? $activity['userid'] : ''; ?>"><br><br>
+        <select id="newUserId" name="newUserId">
+            <?php foreach ($userIDs as $userID): ?>
+                <option value="<?php echo $userID; ?>"><?php echo $userID; ?></option>
+            <?php endforeach; ?>
+        </select><br><br>
         
         <label for="newActivityTypeId">New Activity Type ID:</label>
-        <input type="text" id="newActivityTypeId" name="newActivityTypeId" value="<?php echo isset($activity['activity_type_id']) ? $activity['activity_type_id'] : ''; ?>"><br><br>
+        <select id="newActivityTypeId" name="newActivityTypeId">
+            <?php foreach ($activityTypes as $activityType): ?>
+                <option value="<?php echo $activityType['type_id']; ?>"><?php echo $activityType['ActivityName']; ?></option>
+            <?php endforeach; ?>
+        </select><br><br>
         
         <label for="newDateReceived">New Date Received:</label>
-        <input type="date" id="newDateReceived" name="newDateReceived" value="<?php echo isset($activity['Date_Recieved']) ? $activity['Date_Recieved'] : ''; ?>"><br><br>
+        <input type="date" id="newDateReceived" name="newDateReceived" value="<?php echo isset($activity->dateReceived) ? $activity->dateReceived : ''; ?>"><br><br>
         
         <label for="newReceivedBy">New Received By:</label>
-        <input type="text" id="newReceivedBy" name="newReceivedBy" value="<?php echo isset($activity['Recieved_By']) ? $activity['Recieved_By'] : ''; ?>"><br><br>
+        <select id="newReceivedBy" name="newReceivedBy">
+            <?php foreach ($userIDs as $userID): ?>
+                <option value="<?php echo $userID; ?>"><?php echo $userID; ?></option>
+            <?php endforeach; ?>
+        </select><br><br>
         
         <label for="newTimeLeaved">New Time Leaved:</label>
-        <input type="time" id="newTimeLeaved" name="newTimeLeaved" value="<?php echo isset($activity['Time_Leaved']) ? $activity['Time_Leaved'] : ''; ?>"><br><br>
+        <input type="time" id="newTimeLeaved" name="newTimeLeaved" value="<?php echo isset($activity->timeLeaved) ? $activity->timeLeaved : ''; ?>"><br><br>
         
         <input type="submit" value="Update">
     </form>

@@ -1,28 +1,24 @@
 <?php
 session_start();
 
-// Check if UserID and usertype are provided in the URL
 if (isset($_GET['UserID']) && isset($_GET['usertype'])) {
     $UserID = $_GET['UserID'];
     $usertype = $_GET['usertype'];
 
-    // Database connection
     require_once 'dbconnect.php'; // Include your database connection file
-    require_once 'DailyActivityController.php';
+    require_once 'DailyActivityController.php'; // Include your controller
+    require_once 'UsersController.php'; // Include UsersController for getting user names
 
-    $db = Database::getInstance();
-    $conn = $db->getConnection();
+    $db = Database::getInstance(); // Get the database instance
+    $conn = $db->getConnection(); // Get the database connection
 
-    $controller = new DailyActivityController(new DailyActivityModel($conn));
+    $controller = new DailyActivityController(new DailyActivityModel($conn)); // Instantiate the controller with the model
+    $usersController = new UsersController(); // Instantiate UsersController
 
-    // Fetch all daily activities for the specific user
-    $allActivities = $controller->getDailyActivitiesByUserID($UserID, $usertype);
-
-    // Assuming you have a function to get activity names, you can fetch them here
+    $allActivities = $controller->getAllDailyActivities(); // Get all daily activities
 
 } else {
-    // If UserID and usertype are not provided, redirect to the login page
-    header("Location: login.php");
+    header("Location: login.php"); // Redirect to login page if UserID and usertype are not provided
     exit();
 }
 ?>
@@ -61,35 +57,36 @@ if (isset($_GET['UserID']) && isset($_GET['usertype'])) {
     <a href="DailyActivitydelete.php?UserTypeID=<?php echo $usertype; ?>" class="Delete-button">Delete existing Activity</a>
 
     <table>
-    <thead>
-    <tr>
-        <th>Activity ID</th>
-        <th>User ID</th>
-        <th>Activity Type ID</th>
-        <th>Activity Name</th>
-        <th>Date Received</th>
-        <th>Received By</th>
-        <th>Time Leaved</th>
-    </tr>
-</thead>
-<tbody>
-    <?php foreach ($allActivities as $activity): ?>
-        <tr>
-            <td><?php echo isset($activity['activity_id']) ? $activity['activity_id'] : ''; ?></td>
-            <td><?php echo isset($activity['user_id']) ? $activity['user_id'] : ''; ?></td>
-            <td><?php echo isset($activity['activity_type_id']) ? $activity['activity_type_id'] : ''; ?></td>
-            <td><?php echo isset($activity['ActivityName']) ? $activity['ActivityName'] : ''; ?></td>
-            <td><?php echo isset($activity['Date_Recieved']) ? $activity['Date_Recieved'] : ''; ?></td>
-            <td><?php echo isset($activity['Recieved_By']) ? $activity['Recieved_By'] : ''; ?></td>
-            <td><?php echo isset($activity['Time_Leaved']) ? $activity['Time_Leaved'] : ''; ?></td> <!-- Added this column -->
-        </tr>
-    <?php endforeach; ?>
-</tbody>
+        <thead>
+            <tr>
+                <th>Activity ID</th>
+                <th>Name</th>
+                <th>Activity Type ID</th>
+                <th>Activity Name</th>
+                <th>Date Received</th>
+                <th>Received By</th>
+                <th>Time Leaved</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($allActivities as $activity): ?>
+                <tr>
+                    <td><?php echo $activity->activityId; ?></td>
+                    <td><?php echo $usersController->getUserName($activity->userId); ?></td>
+                    <td><?php echo $activity->activityTypeId; ?></td>
+                    <td><?php echo $activity->ActivityName; ?></td>
+                    <td><?php echo $activity->dateReceived; ?></td>
+                    <td><?php echo $activity->receivedBy; ?></td>
+                    <td><?php echo $activity->timeLeaved; ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
     </table>
-    <a href="A_ADview.php?UserTypeID=<?php echo $usertype; ?>&UserID=<?php echo $UserID; ?>&ActivityID=<?php echo $activity['activity_id']; ?>">add Details</a><br>
-    <a href="V_ADview.php?UserTypeID=<?php echo $usertype; ?>&UserID=<?php echo $UserID; ?>&ActivityID=<?php echo $activity['activity_id']; ?>">View Details</a><br>
+    <a href="PD_View.php?UserTypeID=<?php echo $usertype; ?>&UserID=<?php echo $UserID; ?>">View Payments</a><br>
+    <a href="A_ADview.php?UserTypeID=<?php echo $usertype; ?>&UserID=<?php echo $UserID; ?>&ActivityID=<?php echo $activity->activityId; ?>">add Details</a><br>
+    <a href="V_ADview.php?UserTypeID=<?php echo $usertype; ?>&UserID=<?php echo $UserID; ?>&ActivityID=<?php echo $activity->activityId; ?>">View Details</a><br>
     <a href="UserTypesView.php?UserTypeID=<?php echo $usertype; ?>" class="UserTypes Button">Show UserTypes</a><br>
-    <a href="UsersView.php?UserTypeID=<?php echo $usertype; ?>" class="Users Button">Show Users </a><br>
+    <a href="UsersView.php?UserTypeID=<?php echo $usertype; ?>" class="Users Button">Show Users</a><br>
 
 </body>
 </html>

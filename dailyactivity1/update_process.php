@@ -1,50 +1,52 @@
 <?php
-session_start();
+require_once 'dbconnect.php';
+require_once 'DailyActivityController.php';
+require_once 'PermissionController.php';
 
-// Check if the user is logged in
-if (!isset($_SESSION['UserID'])) {
-    // Redirect to the login page
-    header("Location: login.php");
-    exit();
+$db = Database::getInstance();
+$conn = $db->getConnection();
+
+$controller = new DailyActivityController(new DailyActivityModel($conn));
+$permissionController = new PermissionController();
+
+if (isset($_GET['UserTypeID'])) {
+    $userTypeID = $_GET['UserTypeID'];
+
+    // Check if the user type ID is not zero (i.e., not admin)
+    if (!$permissionController->checkPermission($userTypeID, 'update_activity.php')) {
+        // Redirect to an error page or display an access denied message
+        header("Location: permission_denied.php");
+        exit();
+    }
 }
 
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['activity_id'])) {
-    // Get form data
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Extract data from the form
     $activityId = $_POST['activity_id'];
     $newUserId = $_POST['newUserId'];
     $newActivityTypeId = $_POST['newActivityTypeId'];
     $newDateReceived = $_POST['newDateReceived'];
     $newReceivedBy = $_POST['newReceivedBy'];
     $newTimeLeaved = $_POST['newTimeLeaved'];
+    $activityName = $_POST['activityName']; // Retrieve activity name
 
-    // Database connection
-    require_once 'dbconnect.php'; // Include your database connection file
-    require_once 'DailyActivityController.php';
+    // Create a DailyActivity object with the updated data
+    $updatedActivity = new DailyActivity($activityId, $newUserId, $newActivityTypeId, $newDateReceived, $newReceivedBy, $newTimeLeaved, $activityName);
 
-    $db = Database::getInstance();
-    $conn = $db->getConnection();
+    // Update the daily activity
+    $result = $controller->updateDailyActivity($updatedActivity);
 
-    $controller = new DailyActivityController(new DailyActivityModel($conn));
-
-    // Update the activity
-    $updateSuccess = $controller->updateDailyActivity($activityId, [
-        'user_id' => $newUserId,
-        'activity_type_id' => $newActivityTypeId,
-        'Date_Recieved' => $newDateReceived,
-        'Recieved_By' => $newReceivedBy,
-        'Time_Leaved' => $newTimeLeaved
-    ]);
-
-    if ($updateSuccess) {
+    if ($result) {
         echo "Activity updated successfully!";
-        exit(); // Add exit to prevent further execution
+        // Redirect to a success page or display a success message
     } else {
-        echo "Error updating activity!";
+        // Redirect to an error page or display an error message
+        header("Location: update_error.php");
+        exit();
     }
 } else {
-    // If form is not submitted, redirect to the view page
-    header("Location: view.php");
+    // Redirect to an error page or display an error message
+    header("Location: update_error.php");
     exit();
 }
 ?>

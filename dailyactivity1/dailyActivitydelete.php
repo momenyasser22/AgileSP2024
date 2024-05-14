@@ -26,12 +26,22 @@ $allActivities = $controller->getAllDailyActivities();
 // Check if form is submitted for deletion
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['activity_id'])) {
     $activityId = $_POST['activity_id'];
-    $deleteSuccess = $controller->deleteDailyActivity($activityId);
-    if ($deleteSuccess) {
-        echo "Activity deleted successfully!";
-        header("Location: view.php?deleted=true");
+
+    // Retrieve the activity object using the activity ID
+    $activity = $controller->getDailyActivityById($activityId);
+
+    // Check if the activity object is not null
+    if ($activity) {
+        // Delete the activity using the activity object
+        $deleteSuccess = $controller->deleteDailyActivity($activity);
+        if ($deleteSuccess) {
+            echo "Activity deleted successfully!";
+            exit();
+        } else {
+            echo "Error deleting activity!";
+        }
     } else {
-        echo "Error deleting activity!";
+        echo "Activity not found!";
     }
 }
 ?>
@@ -49,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['activity_id'])) {
         <label for="activity_id">Select Activity ID to delete:</label>
         <select name="activity_id" id="activity_id">
             <?php foreach ($allActivities as $activityItem): ?>
-                <option value="<?php echo $activityItem['activity_id']; ?>"><?php echo $activityItem['activity_id']; ?></option>
+                <option value="<?php echo $activityItem->activityId; ?>"><?php echo $activityItem->activityId; ?></option>
             <?php endforeach; ?>
         </select>
         <input type="submit" value="Delete">
