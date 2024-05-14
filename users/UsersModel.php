@@ -57,7 +57,15 @@ class UsersModel {
     
             return $userIds;
         }
-}
+        public function getUserName($userID) {
+            $stmt = $this->db->prepare("SELECT Name FROM users WHERE UserID = ?");
+            $stmt->bind_param("i", $userID);
+            $stmt->execute();
+            
+            // Return the result set directly
+            return $stmt->get_result();
+        }
+    }
 
 
 ?>

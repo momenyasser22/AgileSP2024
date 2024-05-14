@@ -27,5 +27,18 @@ class UsersController {
         return $this->model->getAllUserIds();
 
 }
+public function getUserName($userID) {
+    $result = $this->model->getUserName($userID);
+    
+    // Check if the result contains rows
+    if ($result->num_rows > 0) {
+        // Fetch row and return user name
+        $row = $result->fetch_assoc();
+        return $row['Name'];
+    } else {
+        return "Unknown"; // Return "Unknown" if user ID not found
+    }
+}
+
 }
 ?>
